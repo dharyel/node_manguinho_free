@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/dharyel/node_manguinho_free#readme",
   "devDependencies": {
-    "standard": "^17.0.0"
+    "typescript": "^4.7.4"
   }
 }

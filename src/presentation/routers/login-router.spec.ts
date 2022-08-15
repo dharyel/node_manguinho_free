@@ -8,7 +8,8 @@ interface HttpResponse {
 
 class LoginRouter {
     route (httpRequest: HttpRequest) {
-        if (!httpRequest.body.email || !httpRequest.body.password) {
+        const { email, password } = httpRequest.body
+        if (!email || !password) {
             const httpResponse: HttpResponse = {
                 statusCode: 400
             }

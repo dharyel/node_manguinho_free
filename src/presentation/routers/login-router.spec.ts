@@ -1,55 +1,6 @@
-interface IHttpRequest {
-    body: any;
-}
-
-interface IHttpResponse {
-    statusCode: number;
-    body: any;
-}
-
-class HttpResponse {
-    static badRequest (paramName: string) {
-        const response: IHttpResponse = {
-            statusCode: 400,
-            body: new MissingParamError(paramName)
-        }
-
-        return response
-    }
-
-    static serverError () {
-        const response: IHttpResponse = {
-            statusCode: 500,
-            body: new MissingParamError('serverError')
-        }
-
-        return response
-    }
-}
-
-class LoginRouter {
-    route (httpRequest: IHttpRequest) {
-        if (!httpRequest || !httpRequest.body) {
-            return HttpResponse.serverError()
-        }
-        const { email, password } = httpRequest.body
-
-        if (!email) {
-            return HttpResponse.badRequest('email')
-        }
-
-        if (!password) {
-            return HttpResponse.badRequest('password')
-        }
-    }
-}
-
-class MissingParamError extends Error {
-    constructor (paramName: string) {
-        super(`Missing param: ${paramName}`)
-        this.name = 'MissingParamError'
-    }
-}
+import { IHttpRequest } from '../../shared/ihttp-request'
+import { MissingParamError } from '../helpers/missing-param-error'
+import { LoginRouter } from './login-router'
 
 describe('Login Router', () => {
     test('Should return 400 if no e-mail is provided', () => {

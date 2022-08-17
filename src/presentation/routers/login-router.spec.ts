@@ -2,12 +2,16 @@ import { IHttpRequest } from '../../shared/ihttp-request'
 import { MissingParamError } from '../helpers/missing-param-error'
 import { LoginRouter } from './login-router'
 
+const makeSut = () => {
+    return new LoginRouter()
+}
+
 describe('Login Router', () => {
     test('Should return 400 if no e-mail is provided', () => {
     // 400 = bad request
     // sut = system under test. É quem está sendo testado
     // nesse caso, sut seria o loginRouter
-        const sut = new LoginRouter()
+        const sut = makeSut()
         const httpRequest: IHttpRequest = {
             body: {
                 password: 'any_password'
@@ -24,7 +28,7 @@ describe('Login Router', () => {
         // 400 = bad request
         // sut = system under test. É quem está sendo testado
         // nesse caso, sut seria o loginRouter
-        const sut = new LoginRouter()
+        const sut = makeSut()
         const httpRequest: IHttpRequest = {
             body: {
                 email: 'any_email@mail.com'

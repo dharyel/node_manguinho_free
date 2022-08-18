@@ -1,9 +1,11 @@
 import { IHttpRequest } from '../../shared/ihttp-request'
-import { IHttpResponse } from '../../shared/ihttp-response'
 import { HttpResponse } from '../helpers/http-response'
 
 export class LoginRouter {
-    route (httpRequest: IHttpRequest) : IHttpResponse {
+    // eslint-disable-next-line no-useless-constructor
+    constructor (private readonly authUseCase: any) {}
+
+    route (httpRequest: IHttpRequest) {
         if (!httpRequest || !httpRequest.body) {
             return HttpResponse.serverError()
         }
@@ -17,6 +19,6 @@ export class LoginRouter {
             return HttpResponse.badRequest('password')
         }
 
-        return HttpResponse.serverError()
+        this.authUseCase.auth(email, password)
     }
 }

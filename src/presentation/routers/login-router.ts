@@ -5,7 +5,7 @@ export class LoginRouter {
     // eslint-disable-next-line no-useless-constructor
     constructor (private readonly authUseCase: any) {}
 
-    route (httpRequest: IHttpRequest) {
+    async route (httpRequest: IHttpRequest) {
         try {
             const { email, password } = httpRequest.body
 
@@ -17,7 +17,7 @@ export class LoginRouter {
                 return HttpResponse.badRequest('password')
             }
 
-            const accessToken = this.authUseCase.auth(email, password)
+            const accessToken = await this.authUseCase.auth(email, password)
 
             if (!accessToken) {
                 return HttpResponse.unauthorizedError()

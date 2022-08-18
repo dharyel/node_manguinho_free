@@ -12,10 +12,10 @@ export class HttpResponse {
         return response
     }
 
-    static badRequest (paramName: string) {
+    static badRequest (error: any) {
         const response: IHttpResponse = {
             statusCode: 400,
-            body: new MissingParamError(paramName)
+            body: error
         }
 
         return response

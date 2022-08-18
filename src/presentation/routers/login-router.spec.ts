@@ -8,7 +8,7 @@ const makeSut = () => {
     class AuthUseCaseSpy {
         email: string = ''
         password: string = ''
-        accessToken: string = ''
+        accessToken: string | null = null
 
         auth (email: string, password: string) {
             this.email = email
@@ -29,7 +29,7 @@ const makeSut = () => {
 
 describe('Login Router', () => {
     test('Should return 200 when valid credentials are provided', () => {
-        const { sut } = makeSut()
+        const { sut, authUseCaseSpy } = makeSut()
         const httpRequest: IHttpRequest = {
             body: {
                 email: 'any_email@mail.com',
@@ -40,6 +40,7 @@ describe('Login Router', () => {
         const httpResponse = sut.route(httpRequest) as IHttpResponse
 
         expect(httpResponse?.statusCode).toBe(200)
+        expect(httpResponse?.body?.accessToken).toBe(authUseCaseSpy.accessToken)
     })
 
     test('Should return 400 if no e-mail is provided', () => {
@@ -92,7 +93,8 @@ describe('Login Router', () => {
     test('Should return 401 when invalid credentials are provided', () => {
         // 401 = unauthorized = não possui credenciais de autenticação válidas
         // 403 = Forbidden = possui credenciais de autenticação válidas, mas o acesso não foi permitido. Ex: recursos só para Admin
-        const { sut } = makeSut()
+        const { sut, authUseCaseSpy } = makeSut()
+        authUseCaseSpy.accessToken = null
         const httpRequest: IHttpRequest = {
             body: {
                 email: 'any_email@mail.com',

@@ -2,10 +2,10 @@ import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from './missing-param-error'
 import { UnauthorizedError } from './unauthorized-error copy'
 export class HttpResponse {
-    static ok () {
+    static ok (data: any) {
         const response: IHttpResponse = {
             statusCode: 200,
-            body: { success: true }
+            body: data
         }
 
         return response

@@ -1,7 +1,7 @@
 import { IHttpRequest } from '../../shared/ihttp-request'
 import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from '../helpers/missing-param-error'
-import { UnauthorizedError } from '../helpers/unauthorized-error copy'
+import { UnauthorizedError } from '../helpers/unauthorized-error'
 import { LoginRouter } from './login-router'
 
 const makeSut = () => {

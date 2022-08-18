@@ -1,6 +1,6 @@
 import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from './missing-param-error'
-import { UnauthorizedError } from './unauthorized-error copy'
+import { UnauthorizedError } from './unauthorized-error'
 export class HttpResponse {
     static ok (data: any) {
         const response: IHttpResponse = {

@@ -2,6 +2,15 @@ import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from './missing-param-error'
 import { UnauthorizedError } from './unauthorized-error copy'
 export class HttpResponse {
+    static ok () {
+        const response: IHttpResponse = {
+            statusCode: 200,
+            body: { success: true }
+        }
+
+        return response
+    }
+
     static badRequest (paramName: string) {
         const response: IHttpResponse = {
             statusCode: 400,

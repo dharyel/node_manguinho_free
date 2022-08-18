@@ -6,7 +6,7 @@ export class LoginRouter {
     constructor (private readonly authUseCase: any) {}
 
     route (httpRequest: IHttpRequest) {
-        if (!httpRequest || !httpRequest.body) {
+        if (!httpRequest || !httpRequest.body || !this.authUseCase.auth) {
             return HttpResponse.serverError()
         }
         const { email, password } = httpRequest.body
@@ -19,8 +19,12 @@ export class LoginRouter {
             return HttpResponse.badRequest('password')
         }
 
-        this.authUseCase.auth(email, password)
+        const accessToken = this.authUseCase.auth(email, password)
 
-        return HttpResponse.unauthorizedError()
+        if (!accessToken) {
+            return HttpResponse.unauthorizedError()
+        }
+
+        return HttpResponse.ok()
     }
 }

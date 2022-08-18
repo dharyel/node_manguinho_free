@@ -8,14 +8,17 @@ const makeSut = () => {
     class AuthUseCaseSpy {
         email: string = ''
         password: string = ''
+        accessToken: string = ''
 
         auth (email: string, password: string) {
             this.email = email
             this.password = password
+            return this.accessToken
         }
     }
 
     const authUseCaseSpy = new AuthUseCaseSpy()
+    authUseCaseSpy.accessToken = 'valid_token'
     const sut = new LoginRouter(authUseCaseSpy)
 
     return {
@@ -25,6 +28,20 @@ const makeSut = () => {
 }
 
 describe('Login Router', () => {
+    test('Should return 200 when valid credentials are provided', () => {
+        const { sut } = makeSut()
+        const httpRequest: IHttpRequest = {
+            body: {
+                email: 'any_email@mail.com',
+                password: 'any_password'
+            }
+        }
+
+        const httpResponse = sut.route(httpRequest) as IHttpResponse
+
+        expect(httpResponse?.statusCode).toBe(200)
+    })
+
     test('Should return 400 if no e-mail is provided', () => {
     // 400 = bad request
     // sut = system under test. É quem está sendo testado
@@ -86,5 +103,17 @@ describe('Login Router', () => {
         const httpResponse = sut.route(httpRequest)
         expect(httpResponse?.statusCode).toBe(401)
         expect(httpResponse?.body).toEqual(new UnauthorizedError())
+    })
+
+    test('Should return 500 if AuthUseCase has no auth method', () => {
+        const sut = new LoginRouter({})
+        const httpRequest: IHttpRequest = {
+            body: {
+                email: 'any_email@mail.com',
+                password: 'any_password'
+            }
+        }
+        const httpResponse = sut.route(httpRequest)
+        expect(httpResponse?.statusCode).toBe(500)
     })
 })

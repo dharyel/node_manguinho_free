@@ -1,5 +1,7 @@
 import { IHttpRequest } from '../../shared/ihttp-request'
+import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from '../helpers/missing-param-error'
+import { UnauthorizedError } from '../helpers/unauthorized-error copy'
 import { LoginRouter } from './login-router'
 
 const makeSut = () => {
@@ -34,7 +36,7 @@ describe('Login Router', () => {
             }
         }
 
-        const httpResponse = sut.route(httpRequest)
+        const httpResponse = sut.route(httpRequest) as IHttpResponse
 
         expect(httpResponse?.statusCode).toBe(400)
         expect(httpResponse?.body).toEqual(new MissingParamError('email'))
@@ -51,7 +53,7 @@ describe('Login Router', () => {
             }
         }
 
-        const httpResponse = sut.route(httpRequest)
+        const httpResponse = sut.route(httpRequest) as IHttpResponse
 
         expect(httpResponse?.statusCode).toBe(400)
         expect(httpResponse?.body).toEqual(new MissingParamError('password'))
@@ -71,6 +73,8 @@ describe('Login Router', () => {
     })
 
     test('Should return 401 when invalid credentials are provided', () => {
+        // 401 = unauthorized = não possui credenciais de autenticação válidas
+        // 403 = Forbidden = possui credenciais de autenticação válidas, mas o acesso não foi permitido. Ex: recursos só para Admin
         const { sut } = makeSut()
         const httpRequest: IHttpRequest = {
             body: {
@@ -81,5 +85,6 @@ describe('Login Router', () => {
 
         const httpResponse = sut.route(httpRequest)
         expect(httpResponse?.statusCode).toBe(401)
+        expect(httpResponse?.body).toEqual(new UnauthorizedError())
     })
 })

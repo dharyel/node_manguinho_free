@@ -1,6 +1,6 @@
 import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from './missing-param-error'
-
+import { UnauthorizedError } from './unauthorized-error copy'
 export class HttpResponse {
     static badRequest (paramName: string) {
         const response: IHttpResponse = {
@@ -18,5 +18,12 @@ export class HttpResponse {
         }
 
         return response
+    }
+
+    static unauthorizedError () {
+        return {
+            statusCode: 401,
+            body: new UnauthorizedError()
+        }
     }
 }

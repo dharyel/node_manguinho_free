@@ -1,10 +1,11 @@
 import { IHttpRequest } from '../../shared/ihttp-request'
 import { HttpResponse } from '../helpers/http-response'
+import { InvalidParamError } from '../helpers/invalid-param-error'
 import { MissingParamError } from '../helpers/missing-param-error'
 
 export class LoginRouter {
     // eslint-disable-next-line no-useless-constructor
-    constructor (private readonly authUseCase: any) {}
+    constructor (private readonly authUseCase: any, private readonly emailValidator: any) {}
 
     async route (httpRequest: IHttpRequest) {
         try {
@@ -12,6 +13,10 @@ export class LoginRouter {
 
             if (!email) {
                 return HttpResponse.badRequest(new MissingParamError('email'))
+            }
+
+            if (!this.emailValidator.isValid(email)) {
+                return HttpResponse.badRequest(new InvalidParamError('email'))
             }
 
             if (!password) {

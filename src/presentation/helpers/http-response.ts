@@ -1,5 +1,4 @@
 import { IHttpResponse } from '../../shared/ihttp-response'
-import { MissingParamError } from './missing-param-error'
 import { ServerError } from './server-error'
 import { UnauthorizedError } from './unauthorized-error'
 export class HttpResponse {

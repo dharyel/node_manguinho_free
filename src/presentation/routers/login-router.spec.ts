@@ -4,16 +4,35 @@ import { MissingParamError } from '../helpers/missing-param-error'
 import { UnauthorizedError } from '../helpers/unauthorized-error'
 import { ServerError } from '../helpers/server-error'
 import { LoginRouter } from './login-router'
+import { InvalidParamError } from '../helpers/invalid-param-error'
 
 const makeSut = () => {
     const authUseCaseSpy = makeAuthUseCase()
     authUseCaseSpy.accessToken = 'valid_token'
-    const sut = new LoginRouter(authUseCaseSpy)
+
+    const emailValidatorSpy = makeEmailValidator()
+    const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
 
     return {
         sut,
-        authUseCaseSpy
+        authUseCaseSpy,
+        emailValidatorSpy
     }
+}
+
+const makeEmailValidator = () => {
+    class EmailValidatorSpy {
+        isEmailValid: any
+
+        isValid (email: string) {
+            return this.isEmailValid
+        }
+    }
+
+    const emailValidatorSpy = new EmailValidatorSpy()
+    emailValidatorSpy.isEmailValid = true
+
+    return emailValidatorSpy
 }
 
 const makeAuthUseCase = () => {
@@ -127,7 +146,7 @@ describe('Login Router', () => {
     })
 
     test('Should return 500 if AuthUseCase has no auth method', async () => {
-        const sut = new LoginRouter({})
+        const sut = new LoginRouter({}, makeEmailValidator())
         const httpRequest: IHttpRequest = {
             body: {
                 email: 'any_email@mail.com',
@@ -143,7 +162,10 @@ describe('Login Router', () => {
         const authUseCaseSpy = makeAuthUseCaseWithError()
         authUseCaseSpy.accessToken = 'valid_token'
 
-        const sut = new LoginRouter(authUseCaseSpy)
+        const emailValidatorSpy = makeEmailValidator()
+
+        const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+
         const httpRequest: IHttpRequest = {
             body: {
                 email: 'any_email@mail.com',
@@ -152,5 +174,22 @@ describe('Login Router', () => {
         }
         const httpResponse = await sut.route(httpRequest)
         expect(httpResponse?.statusCode).toBe(500)
+    })
+
+    test('Should return 400 if an invalid email is provided', async () => {
+        const { sut, emailValidatorSpy } = makeSut()
+        emailValidatorSpy.isEmailValid = false
+
+        const httpRequest: IHttpRequest = {
+            body: {
+                email: 'any_email@mail.com',
+                password: 'any_password'
+            }
+        }
+
+        const httpResponse = await sut.route(httpRequest) as IHttpResponse
+
+        expect(httpResponse?.statusCode).toBe(400)
+        expect(httpResponse?.body).toEqual(new InvalidParamError('email'))
     })
 })

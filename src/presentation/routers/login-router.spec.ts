@@ -2,9 +2,21 @@ import { IHttpRequest } from '../../shared/ihttp-request'
 import { IHttpResponse } from '../../shared/ihttp-response'
 import { MissingParamError } from '../helpers/missing-param-error'
 import { UnauthorizedError } from '../helpers/unauthorized-error'
+import { ServerError } from '../helpers/server-error'
 import { LoginRouter } from './login-router'
 
 const makeSut = () => {
+    const authUseCaseSpy = makeAuthUseCase()
+    authUseCaseSpy.accessToken = 'valid_token'
+    const sut = new LoginRouter(authUseCaseSpy)
+
+    return {
+        sut,
+        authUseCaseSpy
+    }
+}
+
+const makeAuthUseCase = () => {
     class AuthUseCaseSpy {
         email: string = ''
         password: string = ''
@@ -17,14 +29,21 @@ const makeSut = () => {
         }
     }
 
-    const authUseCaseSpy = new AuthUseCaseSpy()
-    authUseCaseSpy.accessToken = 'valid_token'
-    const sut = new LoginRouter(authUseCaseSpy)
+    return new AuthUseCaseSpy()
+}
 
-    return {
-        sut,
-        authUseCaseSpy
+const makeAuthUseCaseWithError = () => {
+    class AuthUseCaseSpy {
+        email: string = ''
+        password: string = ''
+        accessToken: string | null = null
+
+        auth (email: string, password: string) {
+            throw new Error()
+        }
     }
+
+    return new AuthUseCaseSpy()
 }
 
 describe('Login Router', () => {
@@ -109,6 +128,22 @@ describe('Login Router', () => {
 
     test('Should return 500 if AuthUseCase has no auth method', () => {
         const sut = new LoginRouter({})
+        const httpRequest: IHttpRequest = {
+            body: {
+                email: 'any_email@mail.com',
+                password: 'any_password'
+            }
+        }
+        const httpResponse = sut.route(httpRequest)
+        expect(httpResponse?.statusCode).toBe(500)
+        expect(httpResponse?.body).toEqual(new ServerError())
+    })
+
+    test('Should return 500 if AuthUseCase throws', () => {
+        const authUseCaseSpy = makeAuthUseCaseWithError()
+        authUseCaseSpy.accessToken = 'valid_token'
+
+        const sut = new LoginRouter(authUseCaseSpy)
         const httpRequest: IHttpRequest = {
             body: {
                 email: 'any_email@mail.com',

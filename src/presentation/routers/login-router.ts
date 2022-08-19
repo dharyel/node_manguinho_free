@@ -1,7 +1,6 @@
 import { IHttpRequest } from '../../shared/ihttp-request'
 import { HttpResponse } from '../helpers/http-response'
-import { InvalidParamError } from '../helpers/invalid-param-error'
-import { MissingParamError } from '../helpers/missing-param-error'
+import { InvalidParamError, MissingParamError } from '../errors'
 
 export class LoginRouter {
     // eslint-disable-next-line no-useless-constructor

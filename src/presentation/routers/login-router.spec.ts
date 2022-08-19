@@ -1,10 +1,7 @@
 import { IHttpRequest } from '../../shared/ihttp-request'
 import { IHttpResponse } from '../../shared/ihttp-response'
-import { MissingParamError } from '../helpers/missing-param-error'
-import { UnauthorizedError } from '../helpers/unauthorized-error'
-import { ServerError } from '../helpers/server-error'
+import { MissingParamError, UnauthorizedError, ServerError, InvalidParamError } from '../errors'
 import { LoginRouter } from './login-router'
-import { InvalidParamError } from '../helpers/invalid-param-error'
 
 const makeSut = () => {
     const authUseCaseSpy = makeAuthUseCase()

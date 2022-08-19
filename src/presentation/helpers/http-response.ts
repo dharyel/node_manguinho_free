@@ -1,6 +1,6 @@
 import { IHttpResponse } from '../../shared/ihttp-response'
-import { ServerError } from './server-error'
-import { UnauthorizedError } from './unauthorized-error'
+import { ServerError, UnauthorizedError } from '../errors'
+
 export class HttpResponse {
     static ok (data: any) {
         const response: IHttpResponse = {

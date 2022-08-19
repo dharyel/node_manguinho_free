@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watch --silent",
+    "test-coverage": "jest --coverage",
     "start": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "type": "module",
